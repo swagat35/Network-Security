@@ -8,7 +8,8 @@ from networksecurity.components.data_ingestion import DataIngestion
 from networksecurity.components.data_validation import DataValidation
 from networksecurity.components.data_transformation import DataTransformation
 from networksecurity.components.model_trainer import ModelTrainer
-
+from networksecurity.constants.training_pipeline import TRAINING_BUCKET_NAME
+from networksecurity.cloud.s3_sync import S3Sync
 from networksecurity.entity.config_entity import(
     TrainingPipelineConfig,
     DataIngestionConfig,
@@ -28,7 +29,9 @@ from networksecurity.entity.artifact_entity import (
 
 class TrainingPipeline:
     def __init__(self):
+        self.s3_sync = S3Sync()
         self.training_pipeline_config=TrainingPipelineConfig()
+
 
         
         
