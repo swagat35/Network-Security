@@ -14,7 +14,7 @@ from networksecurity.pipeline.training_pipeline import TrainingPipeline
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, File, UploadFile,Request
 from uvicorn import run as app_run
-from fastapi.responses import Response
+from fastapi.responses import Response, HTMLResponse
 from starlette.responses import RedirectResponse
 import pandas as pd
 
@@ -43,7 +43,11 @@ app.add_middleware(
 )
 
 from fastapi.templating import Jinja2Templates
-templates=Jinja2Templates(directory="./templates")
+
+# Fix: Get absolute path to templates directory
+template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+print(f"Template directory: {template_dir}")
+templates = Jinja2Templates(directory=template_dir)
 
 @app.get("/", tags=["authentication"])
 async def index():
@@ -109,7 +113,8 @@ async def predict_route(request: Request, file: UploadFile = File(...)):
         # Generate HTML table
         table_html = df.to_html(classes='table table-striped')
         
-        return templates.TemplateResponse("table.html", {"request": request, "table": table_html})
+        # Return as simple HTML response
+        return HTMLResponse(content=table_html)
         
     except Exception as e:
         print(f"\n{'='*50}")
