@@ -42,6 +42,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.templating import Jinja2Templates
+
+# Fix: Get absolute path to templates directory
+template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+print(f"Template directory: {template_dir}")
+templates = Jinja2Templates(directory=template_dir)
+
 @app.get("/", tags=["authentication"])
 async def index():
     return RedirectResponse(url="/docs")
@@ -64,6 +71,8 @@ async def predict_route(request: Request, file: UploadFile = File(...)):
         print("CSV loaded successfully")
         print(f"DataFrame shape: {df.shape}")
         print(f"DataFrame columns: {list(df.columns)}")
+        print(f"DataFrame dtypes:\n{df.dtypes}")
+
         print("="*50)
         
         # Load preprocessor and model
@@ -80,8 +89,20 @@ async def predict_route(request: Request, file: UploadFile = File(...)):
         network_model = NetworkModel(preprocessor=preprocessor, model=final_model)
         print("✓ NetworkModel initialized successfully")
         
+
         # Make predictions
         print("\nMaking predictions...")
+
+        # Print first row info
+        print(f"\nFirst row of data:")
+        print(df.iloc[0])
+        
+        # Make predictions
+        print("\nMaking predictions...")
+        print(f"DataFrame type before predict: {type(df)}")
+        print(f"DataFrame is not dict: {not isinstance(df, dict)}")
+        
+
         y_pred = network_model.predict(df)
         print(f"✓ Predictions made successfully")
         print(f"Predictions: {y_pred}")
@@ -95,6 +116,7 @@ async def predict_route(request: Request, file: UploadFile = File(...)):
         df.to_csv('prediction_output/output.csv', index=False)
         print("✓ Output CSV saved successfully")
         
+
         # Generate HTML table with styling
         table_html = df.to_html(classes='table table-striped table-bordered', index=False)
         
@@ -174,6 +196,13 @@ async def predict_route(request: Request, file: UploadFile = File(...)):
         
         # Return as HTML response
         return HTMLResponse(content=html_content)
+
+        # Generate HTML table
+        table_html = df.to_html(classes='table table-striped')
+        
+        # Return as simple HTML response
+        return HTMLResponse(content=table_html)
+
         
     except Exception as e:
         print(f"\n{'='*50}")
