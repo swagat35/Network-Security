@@ -59,30 +59,65 @@ async def train_route():
         raise NetworkSecurityException(e,sys)
    
 @app.post("/predict")
-async def predict_route(request: Request,file: UploadFile = File(...)):
+async def predict_route(request: Request, file: UploadFile = File(...)):
     try:
-        df=pd.read_csv(file.file)
-        #print(df)
-        preprocessor=load_object("final_model/preprocessor.pkl")
-        final_model=load_object("final_model/model.pkl")
-        network_model = NetworkModel(preprocessor=preprocessor,model=final_model)
+        # Read CSV file
+        df = pd.read_csv(file.file)
+        print("="*50)
+        print("CSV loaded successfully")
+        print(f"DataFrame shape: {df.shape}")
+        print(f"DataFrame columns: {list(df.columns)}")
+        print(f"DataFrame dtypes:\n{df.dtypes}")
+        print("="*50)
+        
+        # Load preprocessor and model
+        print("Loading preprocessor...")
+        preprocessor = load_object("final_model/preprocessor.pkl")
+        print("✓ Preprocessor loaded successfully")
+        
+        print("Loading model...")
+        final_model = load_object("final_model/model.pkl")
+        print("✓ Model loaded successfully")
+        
+        # Initialize NetworkModel
+        print("Initializing NetworkModel...")
+        network_model = NetworkModel(preprocessor=preprocessor, model=final_model)
+        print("✓ NetworkModel initialized successfully")
+        
+        # Print first row info
+        print(f"\nFirst row of data:")
         print(df.iloc[0])
+        
+        # Make predictions
+        print("\nMaking predictions...")
+        print(f"DataFrame type before predict: {type(df)}")
+        print(f"DataFrame is not dict: {not isinstance(df, dict)}")
+        
         y_pred = network_model.predict(df)
-        print(y_pred)
+        print(f"✓ Predictions made successfully")
+        print(f"Predictions: {y_pred}")
+        
+        # Add predictions to dataframe
         df['predicted_column'] = y_pred
-        print(df['predicted_column'])
-        #df['predicted_column'].replace(-1, 0)
-        #return df.to_json()
+        print("✓ Predictions added to dataframe")
         
         # Create output directory if it doesn't exist
         os.makedirs('prediction_output', exist_ok=True)
-        df.to_csv('prediction_output/output.csv')
+        df.to_csv('prediction_output/output.csv', index=False)
+        print("✓ Output CSV saved successfully")
+        
+        # Generate HTML table
         table_html = df.to_html(classes='table table-striped')
-        #print(table_html)
+        
         return templates.TemplateResponse("table.html", {"request": request, "table": table_html})
+        
     except Exception as e:
-        raise NetworkSecurityException(e,sys)
+        print(f"\n{'='*50}")
+        print(f"ERROR during prediction: {type(e).__name__}")
+        print(f"Error message: {str(e)}")
+        print(f"{'='*50}\n")
+        raise NetworkSecurityException(e, sys)
    
      
 if __name__=="__main__":
-    app_run(app,host="0.0.0.0",port=8080)
+    app_run(app, host="0.0.0.0", port=8000)
