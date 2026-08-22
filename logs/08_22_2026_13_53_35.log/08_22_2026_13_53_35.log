@@ -1,0 +1,6 @@
+[ 2026-08-22 13:53:39,651 ] 1025 httpx - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+[ 2026-08-22 13:53:39,659 ] 107 dagshub - INFO - Accessing as swagat35
+[ 2026-08-22 13:53:40,895 ] 1025 httpx - INFO - HTTP Request: GET https://dagshub.com/api/v1/repos/swagat35/Network-Security "HTTP/1.1 200 OK"
+[ 2026-08-22 13:53:42,101 ] 1025 httpx - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+[ 2026-08-22 13:53:42,105 ] 107 dagshub - INFO - Initialized MLflow to track repo "swagat35/Network-Security"
+[ 2026-08-22 13:53:42,106 ] 107 dagshub - INFO - Repository swagat35/Network-Security initialized!

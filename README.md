@@ -57,7 +57,7 @@ Network-Security/
 
 ## Local Setup
 
-```bash
+
 git clone <REPOSITORY_URL>
 cd Network-Security
 
@@ -66,16 +66,16 @@ conda activate networksecurity
 
 pip install -r requirements.txt
 python main.py
-```
+
 
 Configure required AWS and MongoDB settings through environment variables or a local `.env` file. Never commit credentials or secrets.
 
 ## Docker
 
-```bash
+
 docker build -t networksecurity .
 docker run -p 8080:8080 networksecurity
-```
+
 
 ## CI/CD
 
